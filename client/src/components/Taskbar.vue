@@ -1,16 +1,22 @@
 <template>
-	<v-bottom-nav app color="black" :value="true">
+	<v-bottom-nav app color="black" :value="true" class="text-xs-right">
 		<v-layout>
-			Test Text
+			<v-spacer />
+			<Clock />
 		</v-layout>
 	</v-bottom-nav>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+	import { Component, Vue } from 'vue-property-decorator';
+	import Clock from '@/components/Clock.vue';
 
-@Component
-export default class Taskbar extends Vue {}
+	@Component({
+		components: {
+			Clock,
+		},
+	})
+	export default class Taskbar extends Vue {}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
