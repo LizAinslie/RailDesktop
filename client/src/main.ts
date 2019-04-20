@@ -9,7 +9,7 @@ import Vuex from 'vuex';
 // Load Plugins
 Vue.use(Vuex);
 Vue.use(Vuetify);
-Vue.use(require('vue-moment'));
+// Vue.use(require('vue-moment'));
 
 // Import Vuex Store
 import store from './store/index';
