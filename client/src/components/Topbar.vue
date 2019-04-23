@@ -1,18 +1,20 @@
 <template>
 	<v-system-bar status lights-out dark>
 		<v-spacer></v-spacer>
-		<v-icon>network_wifi</v-icon>
-		<Clock/>
+		<WifiIndicator />
+		<Clock />
 	</v-system-bar>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Clock from './Clock.vue';
+import WifiIndicator from './WifiIndicator.vue';
 
 @Component({
 	components: {
 		Clock,
+		WifiIndicator,
 	},
 })
 export default class Topbar extends Vue {}

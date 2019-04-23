@@ -1,27 +1,39 @@
 <template>
-	<v-layout row align-center>
-		<v-flex>
-			<h2>{{ time }}</h2>
-		</v-flex>
-	</v-layout>
+	<v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-x>
+		<template v-slot:activator='{ on }'>
+			<span v-on='on' class='clock'>{{ time }}</span>
+		</template>
+		
+		<v-card>
+			<v-list>
+				<v-list-tile avatar>
+					<v-list-tile-avatar color="primary">
+						<v-icon>alarm</v-icon>
+					</v-list-tile-avatar>
+
+					<v-list-tile-content>
+						<v-list-tile-title>{{ time }}</v-list-tile-title>
+						<v-list-tile-sub-title>{{ date }}</v-list-tile-sub-title>
+					</v-list-tile-content>
+				</v-list-tile>
+			</v-list>
+		</v-card>
+	</v-menu>
 </template>
 
 <script lang='ts'>
 	import { Component, Vue } from 'vue-property-decorator';
 	import dateformat from 'dateformat';
+	import Constants from '../Constants';
 	
 	@Component
 	export default class Clock extends Vue {
-		private time: any = null;
+		private time: string = '';
+		private date: string = '';
+		private menu: boolean = false;
 	
 		public mounted() {
-			let websocketUrl: string = '';
-	
-			if (process.env.NODE_ENV === 'development') {
-				websocketUrl = `ws://${window.location.hostname}:8081`;
-			}
-	
-			const ws = new WebSocket(websocketUrl);
+			const ws = new WebSocket(Constants.wsUri);
 			ws.onmessage = (event: any): void => {
 				const payload = JSON.parse(event.data);
 	
@@ -29,7 +41,8 @@
 				// console.log(payload.data.time);
 	
 				if (payload.type === 'STATUS') {
-					const timeString = /\d{4}-\d{2}-\d{2}T(\d{2}:\d{2}:\d{2})\.\d{3}Z/.exec(payload.data.time)![1];
+					const timeString = Constants.timeRegex.exec(payload.data.time)![1];
+					const dateString = Constants.dateRegex.exec(payload.data.time)![1];
 	
 					let type = 'AM';
 					const [hour, minute, second] = timeString.split(/:/g);
@@ -41,6 +54,7 @@
 					}
 	
 					this.time = `${newHour}:${minute}:${second} ${type}`;
+					this.date = dateString.replace(/-/g, '/');
 				}
 			};
 		}
@@ -52,5 +66,11 @@
 		color: white;
 		user-select: none;
 		margin-right: 10px;
+	}
+	
+	.clock {
+		&:hover {
+			cursor: pointer;
+		}
 	}
 </style>
