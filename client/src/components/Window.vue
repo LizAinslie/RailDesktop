@@ -1,7 +1,7 @@
 <template>
-	<div class='window' v-bind:style="{ width: width ? width : '350px', height: height ? height : '200px' }" v-draggable='draggableValue'>
+	<div class='window' v-bind:style="{ width: width ? width : '350px', height: height ? height : '200px' }" v-draggable='draggableValue' v-on:click='changeZIndex()'>
 		<v-card class='inner'>
-			<v-system-bar window dark class='systemBar' :ref='handleRef' @click='changeZIndex()'>
+			<v-system-bar window dark class='systemBar' :ref='handleRef'>
 				{{ title }}
 				<v-spacer />
 				<v-icon>remove</v-icon>
