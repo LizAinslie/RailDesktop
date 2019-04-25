@@ -1,54 +1,99 @@
 <template>
-	<div class='window' v-bind:style="{ width: width ? width : '350px', height: height ? height : '200px' }" v-draggable='draggableValue' v-on:click='changeZIndex()'>
-		<v-card class='inner'>
-			<v-system-bar window dark class='systemBar' :ref='handleRef'>
-				{{ title }}
-				<v-spacer />
-				<v-icon>remove</v-icon>
-				<v-icon>close</v-icon>
-			</v-system-bar>
-			<slot />
-		</v-card>
-	</div>
+	<transition name="fade" @after-leave="$emit('close')" @after-enter="$emit('open')">
+		<div ref='window' class='window' :style='styleWindow' v-draggable='draggableValue' @mousedown='activate'>
+			<v-card class='inner'>
+				<v-system-bar window dark class='systemBar' :ref='handleRef'>
+					{{ title }}
+					<v-spacer />
+					<v-icon>remove</v-icon>
+					<v-icon class='systemBar__btn' @click='closeBtnClick'>close</v-icon>
+				</v-system-bar>
+				<slot />
+			</v-card>
+		</div>
+	</transition>
 </template>
 
 <script lang='ts'>
-	import { Component, Vue, Prop } from 'vue-property-decorator';
-	import { Draggable, DraggableValue } from 'draggable-vue-directive';
-	const jenga = require('@/jenga');
-	
-	@Component({
-		directives: {
-			Draggable,
-		},
-	})
-	export default class Window extends Vue {
-		private draggableValue: DraggableValue = {};
-		private handleRef: string = 'handleId';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import { Draggable, DraggableValue } from 'draggable-vue-directive';
+import ZElement from '../ZElement';
+import { windows } from '../windows';
 
-		@Prop()
-		private title!: string;
+const instances: Window[] = [];
 
-		@Prop()
-		private width?: number;
+@Component({
+	directives: {
+		Draggable,
+	},
+})
+export default class Window extends Vue {
+	public zElement!: ZElement;
 
-		@Prop()
-		private height?: number;
+	private draggableValue: DraggableValue = {};
+	private handleRef: string = 'handleId';
+	private zIndex: any = 'auto';
 
-		public mounted() {
-			this.draggableValue.handle = this.$refs[this.handleRef] as HTMLElement;
-			this.draggableValue.boundingElement = this.$parent.$el as HTMLElement;
-		}
+	@Prop({ type: Boolean, default: true })
+	private isOpen!: boolean;
 
-		private changeZIndex() {
-			jenga.bringToFront(this.$el);
+	@Prop({ default: '' })
+	private title!: string;
+
+	@Prop()
+	private width?: number;
+
+	@Prop()
+	private height?: number;
+
+	public mounted() {
+		this.draggableValue.handle = this.$refs[this.handleRef] as HTMLElement;
+		this.draggableValue.boundingElement = this.$parent.$el as HTMLElement;
+
+		instances.push(this);
+		this.zElement = new ZElement(0, (zIndex: any) => this.zIndex = `${zIndex}`);
+		windows.add(this);
+	}
+
+	public beforeDestroy() {
+		windows.delete(this);
+		this.zElement.unregister();
+		instances.splice(instances.indexOf(this), 1);
+	}
+
+	private activate() {
+		this.zElement.raise();
+	}
+
+	private get styleWindow() {
+		return {
+			width: this.width ? `${this.width}px` : '350px',
+			height: this.height ? `${this.height}px` : '200px',
+			zIndex: this.zIndex,
+			display: this.isOpen ? 'default' : 'none',
+		};
+	}
+
+	@Watch('isOpen')
+	private onIsOpenChange(isOpen: boolean) {
+		if (isOpen) {
+			this.activate();
 		}
 	}
+
+	private closeBtnClick() {
+		this.$emit('update:isOpen', false);
+	}
+}
 </script>
 
 <style scoped lang='less'>
 	.systemBar {
 		user-select: none;
+		
+		&__btn {
+			cursor: pointer;
+		}
 	}
 	
 	.window {

@@ -1,5 +1,6 @@
 <template>
 	<v-system-bar status lights-out dark>
+		<Settings />
 		<v-spacer></v-spacer>
 		<WifiIndicator />
 		<Clock />
@@ -9,11 +10,13 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Clock from './Clock.vue';
+import Settings from './Settings.vue';
 import WifiIndicator from './WifiIndicator.vue';
 
 @Component({
 	components: {
 		Clock,
+		Settings,
 		WifiIndicator,
 	},
 })

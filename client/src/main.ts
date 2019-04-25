@@ -24,11 +24,17 @@ Vue.use(Vuetify, {
 // Import Vuex Store
 import store from './store/index';
 
+store.subscribe((mutation: any, state: any) => {
+	// Store the state object as a JSON string
+	localStorage.setItem('store', JSON.stringify(state));
+});
 
 Vue.config.productionTip = false;
-
 
 new Vue({
 	store,
 	render: (h) => h(App),
+	beforeCreate() {
+		this.$store.commit('initialiseStore');
+	},
 }).$mount('#app');
