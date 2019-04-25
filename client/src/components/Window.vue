@@ -41,6 +41,9 @@ export default class Window extends Vue {
 	private title!: string;
 
 	@Prop()
+	private pid!: number;
+
+	@Prop()
 	private width?: number;
 
 	@Prop()
@@ -49,6 +52,11 @@ export default class Window extends Vue {
 	public mounted() {
 		this.draggableValue.handle = this.$refs[this.handleRef] as HTMLElement;
 		this.draggableValue.boundingElement = this.$parent.$el as HTMLElement;
+		
+		this.$store.commit('apps/setWindowOpen', {
+			pid: this.pid,
+			open: true,
+		});
 
 		instances.push(this);
 		this.zElement = new ZElement(0, (zIndex: any) => this.zIndex = `${zIndex}`);
@@ -62,6 +70,7 @@ export default class Window extends Vue {
 	}
 
 	private activate() {
+		this.$store.commit('apps/setActiveApp', this.pid);
 		this.zElement.raise();
 	}
 
@@ -82,7 +91,7 @@ export default class Window extends Vue {
 	}
 
 	private closeBtnClick() {
-		this.$emit('update:isOpen', false);
+		
 	}
 }
 </script>

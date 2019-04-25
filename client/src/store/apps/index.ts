@@ -7,6 +7,7 @@ import { RootState } from '../types';
 
 export const state: AppsState = {
 	activeApp: 0,
+	maxActive: 1,
 	activeWindows: {},
 };
 
