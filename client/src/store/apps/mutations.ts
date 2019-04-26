@@ -43,4 +43,11 @@ export const mutations: MutationTree<AppsState> = {
 		}
 		state.activeWindows[data.pid].windowSettings.open = data.open;
 	},
+	addMenuApp(state, data) {
+		state.menuApps[data.component] = {
+			name: data.name,
+			component: data.component,
+			windowSettings: data.windowSettings,
+		};
+	},
 };

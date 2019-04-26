@@ -9,6 +9,7 @@ export const state: AppsState = {
 	activeApp: 0,
 	maxActive: 1,
 	activeWindows: {},
+	menuApps: {},
 };
 
 const namespaced: boolean = true;

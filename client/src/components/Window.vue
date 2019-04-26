@@ -33,9 +33,7 @@ export default class Window extends Vue {
 	private draggableValue: DraggableValue = {};
 	private handleRef: string = 'handleId';
 	private zIndex: any = 'auto';
-
-	@Prop({ type: Boolean, default: true })
-	private isOpen!: boolean;
+	private open: boolean = true;
 
 	@Prop({ default: '' })
 	private title!: string;
@@ -52,7 +50,7 @@ export default class Window extends Vue {
 	public mounted() {
 		this.draggableValue.handle = this.$refs[this.handleRef] as HTMLElement;
 		this.draggableValue.boundingElement = this.$parent.$el as HTMLElement;
-		
+
 		this.$store.commit('apps/setWindowOpen', {
 			pid: this.pid,
 			open: true,
@@ -83,15 +81,23 @@ export default class Window extends Vue {
 		};
 	}
 
-	@Watch('isOpen')
-	private onIsOpenChange(isOpen: boolean) {
-		if (isOpen) {
-			this.activate();
+	public get isOpen() {
+		if (!this.pid) {
+			return this.open;
+		}
+		return this.$store.state.apps.activeWindows[this.pid].windowSettings.open;
+	}
+
+	public set isOpen(open) {
+		if (!this.pid) {
+			this.open = open;
+		} else {
+			this.$store.commit('apps/removeWindow', this.pid);
 		}
 	}
 
 	private closeBtnClick() {
-		
+		this.isOpen = false;
 	}
 }
 </script>
