@@ -37,7 +37,7 @@
 		}
 
 		private get windows() {
-			return this.$store.state.activeWindows;
+			return this.$store.state.apps.activeWindows;
 		}
 	}
 </script>

@@ -4,7 +4,6 @@ import App from './App.vue';
 // Import Plugins
 import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
-import Vuex from 'vuex';
 import colors from 'vuetify/es5/util/colors';
 
 // Load Plugins
@@ -19,7 +18,6 @@ Vue.use(Vuetify, {
 		success: colors.green.base,
 	},
 });
-// Vue.use(require('vue-moment'));
 
 // Import Vuex Store
 import store from './store/index';
@@ -36,5 +34,6 @@ new Vue({
 	render: (h) => h(App),
 	beforeCreate() {
 		this.$store.commit('initialiseStore');
+		require('./Apps');
 	},
 }).$mount('#app');

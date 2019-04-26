@@ -17,12 +17,11 @@ const store: StoreOptions<RootState> = {
 	mutations: {
 		initialiseStore(state) {
 			// Check if the ID exists
-			if (localStorage.getItem('store')) {
+			if (localStorage.getItem('store') !== null) {
 				// Replace the state object with the stored item
-				this.replaceState(
-					Object.assign(state, JSON.parse(localStorage.getItem('store')!)),
-					null,
-				);
+				/* tslint:disable */
+				this.replaceState(Object.assign(state, JSON.parse(localStorage.getItem('store')!)));
+				/* tslint:enable */
 			}
 		},
 	},

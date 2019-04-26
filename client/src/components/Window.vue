@@ -88,12 +88,13 @@ export default class Window extends Vue {
 		return this.$store.state.apps.activeWindows[this.pid].windowSettings.open;
 	}
 
+	@Prop()
 	public set isOpen(open) {
 		if (!this.pid) {
 			this.open = open;
-		} else {
-			this.$store.commit('apps/removeWindow', this.pid);
+			return;
 		}
+		// this.$store.commit('apps/removeWindow', this.pid);
 	}
 
 	private closeBtnClick() {

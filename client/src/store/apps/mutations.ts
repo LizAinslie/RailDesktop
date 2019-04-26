@@ -1,9 +1,9 @@
 import { MutationTree } from 'vuex';
 import Vue from 'vue';
-import { AppsState } from './types';
+import { AppsState, MenuApp } from './types';
 
 export const mutations: MutationTree<AppsState> = {
-	setActiveApp(state, pid: number) {
+	setActiveApp(state, pid: number): void {
 		if (!(pid in state.activeWindows)) {
 			return;
 		}
@@ -11,14 +11,14 @@ export const mutations: MutationTree<AppsState> = {
 		state.activeApp = state.activeWindows[pid].active;
 	},
 
-	createWindow(state, data: any) {
+	createWindow(state, data: any): void {
 		if (data.pid && data.pid in state.activeWindows) {
 			state.activeWindows[data.pid].windowSettings.open = true;
 			return;
 		}
 
 		let pid: number;
-		(function setPid() {
+		(function setPid(): void {
 			pid = Math.floor(Math.random() * (999999 - 100000)) + 100000;
 			if (pid in state.activeWindows) {
 				setPid();
@@ -30,24 +30,24 @@ export const mutations: MutationTree<AppsState> = {
 			windowSettings: Object.assign({}, data.windowSettings),
 			pid,
 			active: state.maxActive++,
+			style: data.style,
 		});
 	},
-	removeWindow(state, name: any) {
+
+	removeWindow(state, name: any): void {
 		if (name in state.activeWindows) {
 			Vue.delete(state.activeWindows, name);
 		}
 	},
-	setWindowOpen(state, data: any) {
+
+	setWindowOpen(state, data: any): void {
 		if (!(data.pid in state.activeWindows)) {
 			return;
 		}
 		state.activeWindows[data.pid].windowSettings.open = data.open;
 	},
-	addMenuApp(state, data) {
-		state.menuApps[data.component] = {
-			name: data.name,
-			component: data.component,
-			windowSettings: data.windowSettings,
-		};
+
+	addMenuApp(state, data: MenuApp): void {
+		state.menuApps[data.component] = data;
 	},
 };
